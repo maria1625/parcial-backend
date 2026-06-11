@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -25,6 +25,15 @@ export class EstudianteController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Crear estudiante (solo admin)' })
+  @ApiBody({
+    type: CreateEstudianteDto,
+    schema: {
+      example: {
+        nombre: 'Juan Perez',
+        codigo: '2024001',
+      },
+    },
+  })
   @ApiResponse({ status: 201, description: 'Estudiante creado', type: Estudiante })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
   async create(@Body() dto: CreateEstudianteDto): Promise<Estudiante> {
