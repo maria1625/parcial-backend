@@ -15,7 +15,7 @@ WORKDIR /app
 
 # TODO: Usa el comando adecuado para instalar dependencias de forma reproducible.
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 RUN npm run build
@@ -32,9 +32,16 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # TODO: Copia los archivos compilados desde la etapa de build a esta imagen.
+ENV NODE_ENV=production
+COPY package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/dist ./dist
 
 # TODO: Corrige el comando de arranque para ejecutar el punto de entrada compilado de NestJS.
-CMD ["node", "main.js"]
+CMD ["node", "dist/main.js"]
 
 # Puerto por defecto
-EXPOSE 8080
+EXPOSE 3000
+
